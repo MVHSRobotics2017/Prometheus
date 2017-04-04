@@ -26,30 +26,32 @@ if(debug):
 #function wrappers, because i don't like their naming convention
 def connect():
 	return(rc.Open())
-
-def powerLeft(pwr):
-	return(rc.SpeedM1(addr,pwr))
-def powerRight(pwr):
-	return(rc.SpeedM2(addr,pwr))
-	
+def fwLeft(pwr):
+	connect()
+	return(rc.ForwardM2(addr,pwr))
+def fwRight(pwr):
+	connect()
+	return(rc.ForwardM1(addr,pwr))
 def stop():
 	ret = [0,0]
-	ret[0] = powerLeft(64)
-	ret[1] = powerRight(64)
+	ret[0] = fwLeft(0)
+	ret[1] = fwRight(0)
 	return(ret)
 
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
 else:#if we have an argument, lets figure out the command we received...
 	x=argv[1] #we only care about the first arg as it is our command
-	if(x == "--startDefault"):
-		connect()
-		powerLeft(120)
-		powerRight(120)
-	elif(x == "-powerLeft"):
-		powerLeft(argv[2])
+	if(x == "-default"):
+		#connect()
+		fwLeft(30)
+		fwRight(30)
+	elif(x == "-forwardLeft"):
+		fwLeft(int(argv[2]))
 	elif(x == "-stop"):
-		pass #stop all motors
+		stop()
+	elif(x =="-forwardRight"):
+		fwRight(int(argv[2]))
 	else: #if the comand is not recognized, ignore it
 		print("unknown command: {cmd}".format(cmd=x))
 
