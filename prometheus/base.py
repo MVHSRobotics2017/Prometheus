@@ -23,6 +23,7 @@ def versionTest():
 versionTest()
 
 os.system("python ../serial/mySerial.py") #explicit import
+from roboclaw.roboclaw import Roboclaw #messy, but it appears to work
 class prometheus():
 	"""base class for prometheus"""
 	#begin auto-generated stub...
@@ -32,3 +33,4 @@ class prometheus():
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
+	self.rc = roboclaw.Roboclaw()
