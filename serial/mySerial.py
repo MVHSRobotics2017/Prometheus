@@ -7,17 +7,8 @@
 '''Import dependant libs'''
 import platform # for version check
 import serial #Common pySerial library
-from zlib import crc32 as crc #for CRC
+from zlib import crc32 as crc #for CRC check, neccessary for communication
 
-# # Version test # #
-
-def versionTest():
-	"""Ensures the interpreter is python3"""
-	strVersion = platform.python_version() #define var strVersion for handling
-	if int(strVersion[0])!=3: #if we are not running on the python 3.x.x interpreter
-		raise ValueError("This program targets python3, please ensure you have the right path set!")
-#let's ensure script is executed with python3
-versionTest()
 
 
 #import RPi.GPIO as gpio #renaming because I hate caps...
