@@ -7,7 +7,7 @@
 '''Import dependant libs'''
 import platform # for version check
 import serial #Common pySerial library
-import zlib #for CRC
+from zlib import crc32 as crc #for CRC
 
 # # Version test # #
 
