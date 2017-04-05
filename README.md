@@ -1,5 +1,5 @@
 # Prometheus
-Container repository for our Prometheus bot
+Container repository for both Prometheus, Orion, and any shared code between them
 
-This repository is simply being set up now, actual content will come soon
+This repo is still a WIP
 ------
