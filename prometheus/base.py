@@ -25,14 +25,14 @@ versionTest()
 os.system("python ../serial/mySerial.py") #explicit import
 from roboclaw.roboclaw import Roboclaw #messy, but it appears to work
 class prometheus():
-	port = '/dev/ttyACM0'
-	baud = 115200
-	address = 128
 	"""base class for prometheus"""
 	#begin auto-generated stub...
-	def __init__(self, arg):
+	def __init__(self):
 		super(prometheus, self).__init__()
-		self.arg = arg
+		#self.arg = arg
+		self.port = '/dev/ttyACM0'
+		self.baud = 115200
+		self.address = 128
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
@@ -42,3 +42,7 @@ class prometheus():
 		self.rc.Open() #opens the comport for usage
 	def getVersion(self):
 		print(self.rc.ReadVersion(self.address))	
+pm = prometheus() #init prometheus class for use
+pm.myInit() #init the roboClaw
+pm.openCom()
+pm.getVersion()
