@@ -7,6 +7,7 @@
 #Imports
 from sys import argv #for command-line paramaters ('Arguments')
 from roboclaw.roboclaw import Roboclaw
+from time import sleep
 #config
 debug=1
 port='/dev/ttyACM0'
@@ -14,6 +15,7 @@ addr=128
 baud=115200
 #globals
 rc = Roboclaw(port,baud) #init Roboclaw instance
+cells =3 #reffering to battery cell count, just for debug reasons...
 
 if(debug):
 	print("{hello_world}".format(hello_world="Hello, world!"))#just because :3
@@ -37,7 +39,13 @@ def stop():
 	ret[0] = fwLeft(0)
 	ret[1] = fwRight(0)
 	return(ret)
-
+def getVolt():#this is a debug function!
+	"""reads battery volatage"""
+	connect()
+	voltage=(rc.ReadMainBatteryVoltage(addr))
+	volts=voltage[1]/10.#to scale into volts
+	cellV = volts/cells#so we get an aprox Volt per cell (debug)
+	return("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
 else:#if we have an argument, lets figure out the command we received...
@@ -52,6 +60,16 @@ else:#if we have an argument, lets figure out the command we received...
 		stop()
 	elif(x =="-forwardRight"):
 		fwRight(int(argv[2]))
+	elif(x=="-forward"):
+		fwLeft(int(argv[2]))
+		fwRight(int(argv[2]))
+	elif(x=="-volt" or x=="-v"):
+		if(len(argv)>=2 and x == "r"): #if i want it to repeat
+			while(1):
+				print(getVolt())
+				sleep(.1)
+		else:
+			print(getVolt())
 	else: #if the comand is not recognized, ignore it
 		print("unknown command: {cmd}".format(cmd=x))
 
