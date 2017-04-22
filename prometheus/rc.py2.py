@@ -49,20 +49,19 @@ def getVolt():#this is a debug function!
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
 else:#if we have an argument, lets figure out the command we received...
-	x=argv[1] #we only care about the first arg as it is our command
+	x=argv[1] #we only care about the first arg here as it is our command
 	if(x == "-default"):
-		#connect()
 		fwLeft(30)
 		fwRight(30)
-	elif(x == "-forwardLeft"):
+	elif(x == "-fl"):#forward left side motors set to argv[2]
 		fwLeft(int(argv[2]))
 	elif(x == "-stop"):
 		stop()
-	elif(x =="-forwardRight"):
-		fwRight(int(argv[2]))
+	elif(x =="-fr"):#forward right side motors set to argv[2]
+		fwRight(int(argv[2])) #the arg needs to be cast from str to int
 	elif(x=="-forward"):
 		fwRight(int(argv[2]))
-		sleep(1./16.)
+		sleep(1./16.) #attempt to remidy motor desync issue
 		fwLeft(int(argv[2]))
 	elif(x=="-volt" or x=="-v"):
 		if(len(argv)>=2 and x == "r"): #if i want it to repeat

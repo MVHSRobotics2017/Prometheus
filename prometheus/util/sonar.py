@@ -27,7 +27,7 @@ def read(x,y):
 	delta=inEnd-inStart
 	dist=delta/58.2
 	print("inStart={x}\tend={y}\tdelta={z}".format(x=inStart,y=inEnd,z=delta))
-	return delta
+	return dist
 
 try:
 	print("foo?")
