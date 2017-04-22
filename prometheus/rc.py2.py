@@ -45,6 +45,7 @@ def fwRight(pwr):
 	return(rc.ForwardM1(addr,pwr))
 def duty(cycle):
 	connect()
+	cycle = cycle*10**3
 	rc.DutyM1M2(addr,cycle,cycle)
 	#rc.DutyM2(adr,cycle)
 def mixed(pwr):
