@@ -1,4 +1,4 @@
-# Welcome to the wiki!
+#Welcome to the repository!
 ## Quick warning
 Please note, this project is a work in progress written by Python Newbies, please be gentle and use the scripts and programs contained at your own risk.
 
