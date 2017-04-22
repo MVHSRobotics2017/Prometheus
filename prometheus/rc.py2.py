@@ -12,7 +12,7 @@ from time import sleep
 debug=1
 port='/dev/ttyACM0'
 addr=128
-baud=115200
+baud=460800
 #globals
 rc = Roboclaw(port,baud) #init Roboclaw instance
 cells =3 #reffering to battery cell count, just for debug reasons...
@@ -61,8 +61,9 @@ else:#if we have an argument, lets figure out the command we received...
 	elif(x =="-forwardRight"):
 		fwRight(int(argv[2]))
 	elif(x=="-forward"):
-		fwLeft(int(argv[2]))
 		fwRight(int(argv[2]))
+		sleep(1./16.)
+		fwLeft(int(argv[2]))
 	elif(x=="-volt" or x=="-v"):
 		if(len(argv)>=2 and x == "r"): #if i want it to repeat
 			while(1):
@@ -73,8 +74,9 @@ else:#if we have an argument, lets figure out the command we received...
 	elif(x=="--run"):#Run test
 		if(len(argv))<=2:
 			raise ValueError("This argument requires an additional argument.")
-		fwLeft(35)
-		fwRight(35)
+		getVolt()
+		fwRight(45)
+		fwLeft(45)
 		sleep(int(argv[2]))
 		stop()
 	else: #if the comand is not recognized, ignore it
