@@ -5,7 +5,7 @@
 ###
 import os #because 'system' exists elsewhere, to avoid confusion
 from platform import python_version #less memory than importing the whole thing
-
+import subprocess #for executing other programs
 
 # # Version test # #
 def versionTest():
@@ -30,19 +30,13 @@ class prometheus():
 	def __init__(self):
 		super(prometheus, self).__init__()
 		#self.arg = arg
-		self.port = '/dev/ttyACM0'
-		self.baud = 115200
-		self.address = 128
+		self.address = 128 #roboclaw address
+		self.roboLib = 'rc.py2.py' #this is the roboclaw interface
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
 	def myInit(self):
-		self.rc = Roboclaw(self.port,self.baud)
-	def openCom(self):
-		self.rc.Open() #opens the comport for usage
+		self.args = ['python',roboLib,'-v']
+		self.proc = sb.open()		
 	def getVersion(self):
-		print(self.rc.ReadVersion(self.address))	
-pm = prometheus() #init prometheus class for use
-pm.myInit() #init the roboClaw
-pm.openCom()
-pm.getVersion()
+		pass	

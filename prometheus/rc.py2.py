@@ -6,10 +6,11 @@
 
 #Imports
 from sys import argv #for command-line paramaters ('Arguments')
+from sys import exit #for exiting with status codes
 from roboclaw.roboclaw import Roboclaw
 from time import sleep
 #config
-debug=1
+debug=0
 port='/dev/ttyACM0'
 addr=128
 baud=460800
@@ -45,7 +46,10 @@ def getVolt():#this is a debug function!
 	voltage=(rc.ReadMainBatteryVoltage(addr))
 	volts=voltage[1]/10.#to scale into volts
 	cellV = volts/cells#so we get an aprox Volt per cell (debug)
-	return("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
+	if(debug):
+		print("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
+	return([volts,cellV])
+
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
 else:#if we have an argument, lets figure out the command we received...
@@ -80,4 +84,4 @@ else:#if we have an argument, lets figure out the command we received...
 		stop()
 	else: #if the comand is not recognized, ignore it
 		print("unknown command: {cmd}".format(cmd=x))
-
+		exit(42)
