@@ -10,14 +10,14 @@ from sys import exit #for exiting with status codes
 from roboclaw.roboclaw import Roboclaw
 from time import sleep
 #config
-debug=0
+debug=1
 port='/dev/ttyACM0'
 addr=128
 baud=460800
 #globals
 rc = Roboclaw(port,baud) #init Roboclaw instance
 cells =3 #reffering to battery cell count, just for debug reasons...
-
+connected = 0 #bool if roboclaw has already run connect()
 if(debug):
 	print("{hello_world}".format(hello_world="Hello, world!"))#just because :3
 	print("Number of arguments={num}".format(num=len(argv)))
@@ -28,13 +28,29 @@ if(debug):
 		i=i+1
 #function wrappers, because i don't like their naming convention
 def connect():
-	return(rc.Open())
+	global connected
+	if(connected == 0):#if we haven't connected already
+		#global connected
+		connected = 1
+		if(debug):
+			print("Opening connection now.")
+		return(rc.Open())
+	else:
+		return(0)
 def fwLeft(pwr):
 	connect()
 	return(rc.ForwardM2(addr,pwr))
 def fwRight(pwr):
 	connect()
 	return(rc.ForwardM1(addr,pwr))
+def duty(cycle):
+	connect()
+	rc.DutyM1M2(addr,cycle,cycle)
+	#rc.DutyM2(adr,cycle)
+def mixed(pwr):
+	connect()
+	rc.SpeedM1(addr,pwr)
+	rc.SpeedM2(addr,pwr)
 def stop():
 	ret = [0,0]
 	ret[0] = fwLeft(0)
@@ -82,6 +98,10 @@ else:#if we have an argument, lets figure out the command we received...
 		fwLeft(45)
 		sleep(int(argv[2]))
 		stop()
+	elif(x=='-mixed'):
+		mixed(int(argv[2]))
+	elif(x=='duty'):
+		duty(int(argv[2]))
 	else: #if the comand is not recognized, ignore it
 		print("unknown command: {cmd}".format(cmd=x))
 		exit(42)
