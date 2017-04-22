@@ -70,6 +70,13 @@ else:#if we have an argument, lets figure out the command we received...
 				sleep(.1)
 		else:
 			print(getVolt())
+	elif(x=="--run"):#Run test
+		if(len(argv))<=2:
+			raise ValueError("This argument requires an additional argument.")
+		fwLeft(35)
+		fwRight(35)
+		sleep(int(argv[2]))
+		stop()
 	else: #if the comand is not recognized, ignore it
 		print("unknown command: {cmd}".format(cmd=x))
 
