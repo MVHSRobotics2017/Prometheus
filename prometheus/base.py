@@ -24,18 +24,18 @@ versionTest()
 
 class prometheus():
 	"""base class for prometheus"""
-	roboLib = "" #perhaps i need to declare it before the init... (wip)
 	#begin auto-generated stub...
 	def __init__(self):
 		super(prometheus, self).__init__()
 		#self.arg = arg
 		self.address = 128 #roboclaw address
 		self.roboLib = 'rc.py2.py' #this is the roboclaw interface
+		self.sb = subprocess
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
 	def myInit(self):
 		self.args = ['python',self.roboLib,'-v']
-		self.proc = sb.open()		
+		self.proc = sb.call(self.args)		
 	def getVersion(self):
 		pass	
