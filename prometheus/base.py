@@ -35,7 +35,7 @@ class prometheus():
 	def placeHolder(self):
 		pass
 	def myInit(self):
-		self.args = ['python',roboLib,'-v']
+		self.args = ['python',self.roboLib,'-v']
 		self.proc = sb.open()		
 	def getVersion(self):
 		pass	
