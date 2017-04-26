@@ -22,10 +22,9 @@ def versionTest():
 #let's ensure script is executed with python3
 versionTest()
 
-os.system("python ../serial/mySerial.py") #explicit import
-from roboclaw.roboclaw import Roboclaw #messy, but it appears to work
 class prometheus():
 	"""base class for prometheus"""
+	roboLib = "" #perhaps i need to declare it before the init... (wip)
 	#begin auto-generated stub...
 	def __init__(self):
 		super(prometheus, self).__init__()
