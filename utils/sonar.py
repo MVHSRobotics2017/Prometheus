@@ -20,8 +20,9 @@ class sonar(trigger,echo):
 		if(isArray(trigger) and isArray(echo)):
 			self.pinTrigger = trigger #must be arrays!
 			self.pinEcho = echo #must be arrays!
-		def setup(self):
-			for pin in self.pinTrigger:#set up each trigger pin
-				GPIO.setup(pin,GPIO.OUT)
-			for pin in self.pinEcho:#set up each echo pin
-				GPIO.setup(pin,GPIO.IN)
+		for pin in self.pinTrigger:#set up each trigger pin
+			GPIO.setup(pin,GPIO.OUT)
+		for pin in self.pinEcho:#set up each echo pin
+			GPIO.setup(pin,GPIO.IN)
+
+
