@@ -1,10 +1,14 @@
 # # #
 # File: gps.py
-# Function: handle GPS communications.
+# Function: module for handling GPS communications.
 # #
 
-class gps():
+#imports
+import serial #for serial comms
+
+class gps(port):
 	"""handle GPS communications."""
 	def __init__(self,arg):
 		super(gps,self).__init()
 		self.arg = arg
+		self.port = port
