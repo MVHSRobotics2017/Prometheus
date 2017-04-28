@@ -1,0 +1,11 @@
+//Copy to <Data\Packages\User\Preferences.sublime-settings>
+{
+	"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
+	"font_size": 12,
+	"default_line_ending":"unix",
+	"show_line_endings":"true",
+	"ignored_packages":
+	[
+		"Vintage"
+	]
+}
