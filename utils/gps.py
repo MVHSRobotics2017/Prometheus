@@ -6,9 +6,13 @@
 #imports
 import serial #for serial comms
 
-class gps(port):
-	"""handle GPS communications."""
-	def __init__(self,arg):
-		super(gps,self).__init()
-		self.arg = arg
-		self.port = port
+#global vars
+port = "" #set me via .setPort!
+
+def setPort(arg):
+	if(type(arg)==str): #sanity check
+		port = arg
+		return(port) #redunant but affirmative feedback
+	else:
+		raise TypeError("Expected a string!")
+
