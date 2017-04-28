@@ -26,7 +26,7 @@ def init(Port,Baud):
 		raise TypeError("Expected a string!")
 	elif(type(Baud)==int and not isPortDefined): #sanity check
 		baud = Baud
-	elif(type(Baud)!=int)):
+	elif(type(Baud)!=int):
 		raise TypeError("Expected an Int!")
 	else:
 		raise ValueError("Something unexpected occured!")
