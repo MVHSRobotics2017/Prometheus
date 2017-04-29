@@ -38,7 +38,8 @@ def formatLatLong(rawStr):
 		tempString = (latV[0])+(latV[1]) #concat the first two bytes
 		print(tempString)
 		latDD = int(tempString)
-		i=0 #reset itterator
+		i=0 #reset iterator
+		tempString = "" #reset tempString
 		for x in latV: #for each char byte
 			if(i>1):
 				tempString+=x
@@ -52,19 +53,19 @@ def formatLatLong(rawStr):
 		#latDD = int(latV[0])*100+int(latV[1])*10+int(latV[2])
 		latDD = int(tempString)
 	if(len(longV)==10): #possible contingency
-		raise NotImplementedError("the contignency arrised. FIX ME!")
+		raise NotImplementedError("the contingency has occurred. FIX ME!")
 	elif(len(longV)==11): # if we have all the LongDD bytes
 		i=0
 		tempString = ""
 		#longDD
-		tempString = longV[0]+longV[1]
+		tempString = longV[0]+longV[1]+longV[2]
 		longDD = int(tempString)
 		print(tempString)
 		#LongMM
 		tempString = ""
 		i=0
 		for x in longV: #concat the longitudinal minute value into a single string
-			if(i>1):
+			if(i>2):
 				tempString+=x
 			i+=1
 		longMM = float(tempString) #and convert to float (because decimals)
@@ -77,7 +78,7 @@ def init(Port,Baud):
 		return() # no need to waste CPU time repeating whats been done
 	elif(type(Port)==str and not isPortDefined): #sanity check
 		port = Port
-		#return(port) #redunant but affirmative feedback
+		#return(port) #redundant but affirmative feedback
 	elif(type(Port)!=str):
 		raise TypeError("Expected a string!")
 	elif(type(Baud)==int and not isPortDefined): #sanity check
@@ -85,7 +86,7 @@ def init(Port,Baud):
 	elif(type(Baud)!=int):
 		raise TypeError("Expected an Int!")
 	else:
-		raise ValueError("Something unexpected occured!")
+		raise ValueError("Something unexpected occurred!")
 		#like, really. This should be unreachable
 	isPortDefined = 1
 	return([port,baud])
@@ -95,6 +96,6 @@ def getSerial():
 	if(isPortDefined): #sanity check
 		return(serial.Serial(port, baud))
 	else:
-		raise ValueError("You need to init gps before attempting to get the object!")
+		raise ValueError("You need to init the gps longitudinal before attempting to get the object!")
 
 #Purge before committing!
