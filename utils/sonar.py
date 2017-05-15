@@ -1,28 +1,32 @@
-###
-# File: sonar.py
-# function: act as an interface with a HC-SR04 Ultrasonic
-##
-import RPi.GPIO as GPIO
-import time
-GPIO.setmode(GPIO.BCM) #sets pin numbering
-def isArray(obj):
-	"""tests if obj is a list"""
-	if(type(obj)==list):
-		return(1)
-	else:
-		raise TypeError("Function requires list.")
+def sonar():
+	import RPi.GPIO as GPIO
+	import time
 
-class sonar(trigger,echo):
-	"""docstring for sonar"""
-	def __init__(self, arg):
-		super(sonar, self).__init__()
-		self.arg = arg
-		if(isArray(trigger) and isArray(echo)):
-			self.pinTrigger = trigger #must be arrays!
-			self.pinEcho = echo #must be arrays!
-		for pin in self.pinTrigger:#set up each trigger pin
-			GPIO.setup(pin,GPIO.OUT)
-		for pin in self.pinEcho:#set up each echo pin
-			GPIO.setup(pin,GPIO.IN)
+	GPIO.setmode(GPIO.BOARD)
 
+	TRIG = 7
+	ECHO = 12
 
+	GPIO.setup(TRIG,GPIO.OUT)
+	GPIO.output(TRIG,0)
+
+	GPIO.setup(ECHO,GPIO.IN)
+
+	time.sleep(0.1)
+
+	print("Starting Measurement...")
+
+	GPIO.output(TRIG,1)
+	time.sleep(0.00001)
+	GPIO.output(TRIG,0)
+
+	while GPIO.input(ECHO) == 0:
+		pass
+	start = time.time()
+	while GPIO.input(ECHO) == 1:
+		pass
+	stop = time.time()
+
+	print (stop - start) * 17000
+
+	GPIO.cleanup()
