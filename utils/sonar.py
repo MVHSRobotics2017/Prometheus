@@ -1,11 +1,11 @@
-def sonar():
+def sonar(TRIG,ECHO):
 	import RPi.GPIO as GPIO
 	import time
 
 	GPIO.setmode(GPIO.BOARD)
 
-	TRIG = 7
-	ECHO = 12
+	#TRIG = 7
+	#ECHO = 12
 
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.output(TRIG,0)
