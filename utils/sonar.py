@@ -10,7 +10,7 @@ def sonar(TRIG,ECHO):
 	for pin in TRIG:
 		GPIO.setup(TRIG,GPIO.OUT)
 		GPIO.output(TRIG,0)
-	for pin in ECHO
+	for pin in ECHO:
 		GPIO.setup(pin,GPIO.IN)
 
 	time.sleep(0.1)
@@ -20,10 +20,10 @@ def sonar(TRIG,ECHO):
 		GPIO.output(TRIG[x],1)
 		time.sleep(0.00001)
 		GPIO.output(TRIG[x],0)
-		while GPIO.input(ECHO) == 0:
+		while GPIO.input(ECHO[x]) == 0:
 			pass
 		start = time.time()
-		while GPIO.input(ECHO) == 1:
+		while GPIO.input(ECHO[x]) == 1:
 			pass
 		stop = time.time()
 		print("Mark!\tmeasured time= {delta}".format(delta=(stop-start)))
