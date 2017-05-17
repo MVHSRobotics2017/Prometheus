@@ -21,11 +21,14 @@ class words():
 def parseGPS(rawStr):
 	"""Figure out gps sentance and send output to correct func"""
 	delimStrA = rawStr.split('b\'') #because the serial data begins with a silly "b'"
+#	print(delimStrA)
 	delimStrB = delimStrA[1].split(',')
 	if delimStrB[0] == words.latLong:
 		return(formatLatLong(delimStrB))
 	elif delimStrB[0] ==words.timeData:
 		return(readTime(delimStrB))
+	else:
+		return(0)
 def readTime(delimStr):
 	"""gets time from GPRMC"""
 	h=0 #init vars before use
@@ -136,6 +139,4 @@ def getSerial():
 init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
 for x in range(1,10):
-	print(parseGPS(theGPS.readline()))
-#print(parseGPS("b'$GPRMC,013532.00,A,3336.21891,N,11740.04976,W,0.081,,180517,,,A*6E"))
-#print(parseGPS("b'$GPGGA,013532.00,3336.21891,N,11740.04976,W,1,04,3.59,152.4,M,-32.9,M,,*6D"))
+	print(parseGPS(str(theGPS.readline())))
