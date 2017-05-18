@@ -16,7 +16,7 @@ def sonar(TRIG,ECHO):
 	time.sleep(0.1)
 	print("Starting Measurements...")
 	for x in range(0,len(TRIG)):
-		print("beggining measurement on sensor:{i}".format(i=x))
+		print("beggining measurement on sensor:{i}\n\tusing input ({a},{b}).".format(i=x,a=TRIG[x],b=ECHO[x]))
 		GPIO.output(TRIG[x],1)
 		time.sleep(0.00001)
 		GPIO.output(TRIG[x],0)
