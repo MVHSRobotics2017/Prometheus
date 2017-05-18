@@ -38,4 +38,5 @@ class prometheus():
 		self.args = ['python',self.roboLib,'-v']
 		self.proc = self.sb.call(self.args)		
 	def getVersion(self):
-		pass	
+		self.args = ['python',self.roboLib],'-v'
+		self.proc = self.sb.call(self.args)	

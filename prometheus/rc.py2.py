@@ -48,10 +48,10 @@ def duty(cycle):
 	cycle = cycle*10**3
 	rc.DutyM1M2(addr,cycle,cycle)
 	#rc.DutyM2(adr,cycle)
-def mixed(pwr):
+def mixed(pwrA,pwrB):
 	connect()
-	rc.SpeedM1(addr,pwr)
-	rc.SpeedM2(addr,pwr)
+	rc.DutyM1(addr,pwrA)
+	rc.DutyM2(addr,pwrB)
 def stop():
 	ret = [0,0]
 	ret[0] = fwLeft(0)
@@ -66,6 +66,8 @@ def getVolt():#this is a debug function!
 	if(debug):
 		print("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
 	return([volts,cellV])
+def getVersion():
+	rc.ReadVersion(addr)
 
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
@@ -82,15 +84,16 @@ else:#if we have an argument, lets figure out the command we received...
 		fwRight(int(argv[2])) #the arg needs to be cast from str to int
 	elif(x=="-forward"):
 		fwRight(int(argv[2]))
-		sleep(1./16.) #attempt to remidy motor desync issue
 		fwLeft(int(argv[2]))
-	elif(x=="-volt" or x=="-v"):
+	elif(x=="-volt" or x=="-V"):
 		if(len(argv)>=2 and x == "r"): #if i want it to repeat
 			while(1):
 				print(getVolt())
 				sleep(.1)
 		else:
 			print(getVolt())
+	elif(x=="-V" or x =="-version"):
+		print(getVersion())
 	elif(x=="--run"):#Run test
 		if(len(argv))<=2:
 			raise ValueError("This argument requires an additional argument.")
@@ -100,7 +103,7 @@ else:#if we have an argument, lets figure out the command we received...
 		sleep(int(argv[2]))
 		stop()
 	elif(x=='-mixed'):
-		mixed(int(argv[2]))
+		mixed(int(argv[2]),int(argv[3]))
 	elif(x=='duty'):
 		duty(int(argv[2]))
 	else: #if the comand is not recognized, ignore it
