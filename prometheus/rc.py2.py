@@ -48,11 +48,14 @@ def connect():
 			return(None)
 		else:
 			return(ret) #no error, carry on
+	else:
+		return(1) #connected as is
 def fwLeft(pwr):
 	ret = connect()
 	if type(ret)!=type(None): #error check
-		rc.ForwardM2(addr,pwr)
-		returnStatus(0,"ok")
+		rc.ForwardM2(addr,int(pwr))
+		returnStatus(0,"command:forwardLeft completed OK")
+		return(0)
 	else:
 		returnStatus(1,"command: fwLeft failed.")
 		return(1)
@@ -64,7 +67,7 @@ def fwRight(pwr):
 		return(1)
 	ret = connect()
 	if type(ret)!=type(None): #error check
-		rc.ForwardM1(addr,pwr)
+		rc.ForwardM1(addr,mPwr)
 		return(0)
 	else:
 		returnStatus(1,"command: fwRight failed.")
@@ -138,6 +141,7 @@ else:#if we have an argument, lets figure out the command we received...
 			returnStatus(1,"fwRight returned error state {}".format(x))
 			pass #if the first command fails... don't bother with the other side
 		else:
+			returnStatus(0,"fwRight completed with status 0.")
 			x = fwLeft(argv[2])
 			if x:
 				returnStatus(1,"fwLeft returned error state {}".format(x))
