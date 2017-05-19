@@ -24,10 +24,6 @@ class status(object):
 	success = "ok"
 	error = "err"
 	deliminator = ';'
-		
-
-deliminator = ';'
-success = "done" #successful commands will start with this prefix
 if(debug):
 	print("{hello_world}".format(hello_world="Hello, world!"))#just because :3
 	print("Number of arguments={num}".format(num=len(argv)))
@@ -50,24 +46,31 @@ def connect():
 		except AttributeError as e:
 			returnStatus(1,"AttributeError, check if roboclaw is online.")
 			return(None)
-	else:
-		return(ret)
+		else:
+			return(ret) #no error, carry on
 def fwLeft(pwr):
 	ret = connect()
 	if type(ret)!=type(None): #error check
-		pass
+		rc.ForwardM2(addr,pwr)
+		returnStatus(0,"ok")
 	else:
 		returnStatus(1,"command: fwLeft failed.")
-		return(-1)
-	return(rc.ForwardM2(addr,pwr))
+		return(1)
 def fwRight(pwr):
+	try:
+		mPwr = int(pwr) #try and convert input to int
+	except ValueError as e:
+		returnStatus(1,"{} is not a valid number!".format(pwr))
+		return(1)
 	ret = connect()
 	if type(ret)!=type(None): #error check
-		pass
+		rc.ForwardM1(addr,pwr)
+		return(0)
 	else:
 		returnStatus(1,"command: fwRight failed.")
-		return(-1)
-	return(rc.ForwardM1(addr,pwr))
+		return(1)	
+
+
 def duty(cycle):
 	ret = connect()
 	if type(ret)!=type(None): #error check
@@ -76,7 +79,7 @@ def duty(cycle):
 		#rc.DutyM2(adr,cycle)
 	else:
 		returnStatus(1,"command: duty failed.")
-		return(-1)
+		return(1)
 def mixed(pwrA,pwrB):
 	ret = connect()
 	if type(ret)!=type(None): #error check
@@ -84,7 +87,7 @@ def mixed(pwrA,pwrB):
 		rc.DutyM2(addr,pwrB)
 	else:
 		returnStatus(1,"command: mixed failed.")
-		return(-1)
+		return(1)
 def stop():
 	ret = [0,0]
 	ret[0] = fwLeft(0)
@@ -111,12 +114,13 @@ def getVersion():
 def returnStatus(isError,message):	
 	"""prints message to stdout"""
 	if isError: #if the message is an error message
-		print("{dl}{status}{dl}{msg}".format(dl=deliminator,status=status.error,msg=message))
+		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.error,msg=message))
 	else: #if its a success message
-		print("{dl}{status}{dl}{msg}".format(dl=deliminator,status=status.success,msg=message))
+		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.success,msg=message))
 
 if(len(argv)<=1): #if no no arguments are given
-	raise ValueError("Not enough arguments!")
+	returnStatus(1,"not enough arguments!")
+	#raise ValueError("Not enough arguments!")
 else:#if we have an argument, lets figure out the command we received...
 	x=argv[1] #we only care about the first arg here as it is our command
 	if(x == "-default"):
@@ -129,8 +133,16 @@ else:#if we have an argument, lets figure out the command we received...
 	elif(x =="-fr"):#forward right side motors set to argv[2]
 		fwRight(int(argv[2])) #the arg needs to be cast from str to int
 	elif(x=="-forward"):
-		fwRight(int(argv[2]))
-		fwLeft(int(argv[2]))
+		x=fwRight(argv[2])
+		if(x):
+			returnStatus(1,"fwRight returned error state {}".format(x))
+			pass #if the first command fails... don't bother with the other side
+		else:
+			x = fwLeft(argv[2])
+			if x:
+				returnStatus(1,"fwLeft returned error state {}".format(x))
+			else:
+				returnStatus(0,"command '-forward' completed OK")
 	elif(x=="-volt" or x=="-V"):
 		if(len(argv)>=2 and x == "r"): #if i want it to repeat
 			while(1):
@@ -153,7 +165,7 @@ else:#if we have an argument, lets figure out the command we received...
 		mixed(int(argv[2]),int(argv[3]))
 	elif(x=='duty'):
 		ret = duty(int(argv[2]))
-		print("{deliminator}{prefix}{deliminator}{theOutput}".format(prefix=success,deliminator=deliminator,theOutput=ret))
+		print("{deliminator}{prefix}{deliminator}{theOutput}".format(prefix=status.success,deliminator=status.deliminator,theOutput=ret))
 	else: #if the comand is not recognized, ignore it
 		#print("unknown command: {cmd}".format(cmd=x))
 		returnStatus(1,"unknown command: {cmd}".format(cmd=x))
