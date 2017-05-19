@@ -10,7 +10,7 @@ from sys import exit #for exiting with status codes
 from roboclaw.roboclaw import Roboclaw
 from time import sleep
 #config
-debug=1
+debug=0
 port='/dev/ttyACM0'
 addr=128
 baud=460800
@@ -18,6 +18,16 @@ baud=460800
 rc = Roboclaw(port,baud) #init Roboclaw instance
 cells =3 #reffering to battery cell count, just for debug reasons...
 connected = 0 #bool if roboclaw has already run connect()
+
+class status(object):
+	"""docstring for status"""
+	success = "ok"
+	error = "err"
+	deliminator = ';'
+		
+
+deliminator = ';'
+success = "done" #successful commands will start with this prefix
 if(debug):
 	print("{hello_world}".format(hello_world="Hello, world!"))#just because :3
 	print("Number of arguments={num}".format(num=len(argv)))
@@ -34,24 +44,47 @@ def connect():
 		connected = 1
 		if(debug):
 			print("Opening connection now.")
-		return(rc.Open())
+		ret = rc.Open()
+		try:
+			rc.ReadVersion(addr)
+		except AttributeError as e:
+			returnStatus(1,"AttributeError, check if roboclaw is online.")
+			return(None)
 	else:
-		return(0)
+		return(ret)
 def fwLeft(pwr):
-	connect()
+	ret = connect()
+	if type(ret)!=type(None): #error check
+		pass
+	else:
+		returnStatus(1,"command: fwLeft failed.")
+		return(-1)
 	return(rc.ForwardM2(addr,pwr))
 def fwRight(pwr):
-	connect()
+	ret = connect()
+	if type(ret)!=type(None): #error check
+		pass
+	else:
+		returnStatus(1,"command: fwRight failed.")
+		return(-1)
 	return(rc.ForwardM1(addr,pwr))
 def duty(cycle):
-	connect()
-	cycle = cycle*10**3
-	rc.DutyM1M2(addr,cycle,cycle)
-	#rc.DutyM2(adr,cycle)
+	ret = connect()
+	if type(ret)!=type(None): #error check
+		cycle = cycle*10**3
+		rc.DutyM1M2(addr,cycle,cycle)
+		#rc.DutyM2(adr,cycle)
+	else:
+		returnStatus(1,"command: duty failed.")
+		return(-1)
 def mixed(pwrA,pwrB):
-	connect()
-	rc.DutyM1(addr,pwrA)
-	rc.DutyM2(addr,pwrB)
+	ret = connect()
+	if type(ret)!=type(None): #error check
+		rc.DutyM1(addr,pwrA)
+		rc.DutyM2(addr,pwrB)
+	else:
+		returnStatus(1,"command: mixed failed.")
+		return(-1)
 def stop():
 	ret = [0,0]
 	ret[0] = fwLeft(0)
@@ -59,15 +92,28 @@ def stop():
 	return(ret)
 def getVolt():#this is a debug function!
 	"""reads battery volatage"""
-	connect()
-	voltage=(rc.ReadMainBatteryVoltage(addr))
-	volts=voltage[1]/10.#to scale into volts
-	cellV = volts/cells#so we get an aprox Volt per cell (debug)
-	if(debug):
-		print("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
-	return([volts,cellV])
+	ret = connect()
+	if (type(ret)!=type(None)):
+		voltage=(rc.ReadMainBatteryVoltage(addr))
+		volts=voltage[1]/10.#to scale into volts
+		cellV = volts/cells#so we get an aprox Volt per cell (debug)
+		if(debug):
+			print("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
+		return([volts,cellV])
+	else:
+		returnStatus(1,"unable to read voltage")
 def getVersion():
-	rc.ReadVersion(addr)
+	try:
+		connect()
+		rc.ReadVersion(addr)
+	except Exception as e:
+		returnStatus(1,"Unable to read version")
+def returnStatus(isError,message):	
+	"""prints message to stdout"""
+	if isError: #if the message is an error message
+		print("{dl}{status}{dl}{msg}".format(dl=deliminator,status=status.error,msg=message))
+	else: #if its a success message
+		print("{dl}{status}{dl}{msg}".format(dl=deliminator,status=status.success,msg=message))
 
 if(len(argv)<=1): #if no no arguments are given
 	raise ValueError("Not enough arguments!")
@@ -92,7 +138,7 @@ else:#if we have an argument, lets figure out the command we received...
 				sleep(.1)
 		else:
 			print(getVolt())
-	elif(x=="-V" or x =="-version"):
+	elif(x=="-v" or x =="-version"):
 		print(getVersion())
 	elif(x=="--run"):#Run test
 		if(len(argv))<=2:
@@ -102,10 +148,12 @@ else:#if we have an argument, lets figure out the command we received...
 		fwLeft(45)
 		sleep(int(argv[2]))
 		stop()
+		print(";Done")
 	elif(x=='-mixed'):
 		mixed(int(argv[2]),int(argv[3]))
 	elif(x=='duty'):
-		duty(int(argv[2]))
+		ret = duty(int(argv[2]))
+		print("{deliminator}{prefix}{deliminator}{theOutput}".format(prefix=success,deliminator=deliminator,theOutput=ret))
 	else: #if the comand is not recognized, ignore it
-		print("unknown command: {cmd}".format(cmd=x))
-		exit(42)
+		#print("unknown command: {cmd}".format(cmd=x))
+		returnStatus(1,"unknown command: {cmd}".format(cmd=x))
