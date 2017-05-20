@@ -125,7 +125,13 @@ class prometheus():
 				self.setLeft(cruse)
 			elif(scanRet[2]):#obj ahead
 				self.stop
-				
+				logMgr.log(gps.getLocation)
+				self.setRight(cruse/2)
+				sleep(1)
+				self.setRight(0)
+				self.setLeft(cruse/2)
+				sleep(1)
+			self.forward(cruse)
 rc = prometheus()
 #rc.forward(30)
 #time.sleep(2)
