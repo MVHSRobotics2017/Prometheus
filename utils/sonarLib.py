@@ -16,6 +16,14 @@
 # * the value in centimetres.  If a sensor error occurs, then a     *
 # * value of 100 is returned instead.                               *
 # *******************************************************************
+import RPi.GPIO as GPIO
+import time
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+trig = 38
+echo = 40
+GPIO.setup(trig,GPIO.OUT)
+GPIO.setup(echo,GPIO.IN)
 
 def get_distance ():
     global trig, echo                                                   # Allow access to 'trig' and 'echo' constants
