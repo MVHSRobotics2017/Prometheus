@@ -134,9 +134,19 @@ def getSerial():
 		return(serial.Serial(port, baud))
 	else:
 		raise ValueError("You need to init the gps longitudinal before attempting to get the object!")
-
-#Purge before committing!
+def initGeoFence(pts):
+	"""Collects pts datapoints to define the geofence"""
+	poly = [None] #init poly structure before populatng
+	for x in range(0,pts+1):
+		print("-----------\nposition bot at next geofence vertex and hit enter to continue...\n--------------")
+		sys.stdin.readline()
+		retn = parseGPS(str(theGPS.readline()))
+		while (len(retn)!=4): #if we parsed something other than LL data...
+			retn = parseGPS(str(theGPS.readline())) #read an additional line
+		poly.append((retn[0]E2+retn[1],retn[2]E2+retn[3]))
+		return(poly)
 init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
-for x in range(1,10):
-	print(parseGPS(str(theGPS.readline())))
+#for x in range(1,20):
+#	print(parseGPS(str(theGPS.readline())))
+print(initGeoFence(4))
