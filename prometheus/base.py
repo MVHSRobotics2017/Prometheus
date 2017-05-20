@@ -79,20 +79,53 @@ class prometheus():
 		else:
 			self.stop()
 			print("Exceeded fence!\nStopping!")
-			return(1)
+			return(2)
 	def stop(self):
 		self.args = [commands.py,self.roboLib,commands.stop]
 		return(sb.call(self.args))
 	def collisionTest(self):
 		"""test if unit can avoid crashing via sonar eyes"""
-		while(sonar.read()[2] >=30):
+		dist = sonar.read()
+		print(dist)
+		while(dist[2]>=45.0):
+			dist = sonar.read()
+			print(dist)
 			ret = self.forward(30)
-			if(ret):
+#			time.sleep(1)
+			if(ret==2):
 				try:
 					break
 				except Exception as e:
 					pass
 		self.stop()
+	def scan(self):
+		retn = [0,0,0]
+		dist = sonar.read()
+		if(dist[0] <=60):
+			retn[0] = not retn[0]
+		elif(dist[1] <=60):
+			retn[1] = not retn[1]
+		elif(dist[2] <= 55):
+			retn[2] = not retn[2]
+		return(retn)
+	def search(self):
+		"""search algorithm"""
+		cruse = 60
+		loc = gps.getLocation()
+		if(geofence.pip(loc[0],loc[1],self.fence)):
+			self.forward(cruse)
+			scanRet = self.scan()
+			if(scanRet[0]): #obj off the right sensor
+				self.setRight(cruse/2)
+				sleep(1)
+				self.setRight(cruse)
+			elif(scanRet[1]):#obj off left sensor
+				self.setLeft(cruse/2)
+				sleep(1)
+				self.setLeft(cruse)
+			elif(scanRet[2]):#obj ahead
+				self.stop
+				
 rc = prometheus()
 #rc.forward(30)
 #time.sleep(2)

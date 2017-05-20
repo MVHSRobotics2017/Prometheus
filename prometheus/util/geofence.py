@@ -2,8 +2,11 @@
 # and vertex points
 
 #def point_in_poly(x,y,poly):
+debug = 1
 def pip(x,y,poly):
    # check if point is a vertex
+   if (debug):
+      return(1)
    if (x,y) in poly: return 1
 
    # check if point is on a boundary

@@ -156,6 +156,9 @@ def initGeoFence(pts):
 		print("Point was {}".format(poly[x]))
 	poly.remove(None) #gets red of the index value None, its breaking all the things
 	return(poly)
+def tag():
+	print(getLocation())
+
 init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
 #for x in range(1,20):
