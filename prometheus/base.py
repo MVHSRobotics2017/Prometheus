@@ -5,8 +5,8 @@
 ###
 import os #because 'system' exists elsewhere, to avoid confusion
 from platform import python_version #less memory than importing the whole thing
-import subprocess #for executing other programs
-
+import handleSubproccess as sb
+import time
 # # Version test # #
 def versionTest():
 	"""Ensures the interpreter is python3"""
@@ -22,6 +22,14 @@ def versionTest():
 #let's ensure script is executed with python3
 versionTest()
 
+class commands():
+	py = 'python'
+	getVolt = '-volt'
+	getVersion = '-v'
+	driveRight = '-fr'
+	driveLeft = '-fl'
+	driveForward = '-forward'
+	stop = '-stop'
 class prometheus():
 	"""base class for prometheus"""
 	#begin auto-generated stub...
@@ -30,13 +38,33 @@ class prometheus():
 		#self.arg = arg
 		self.address = 128 #roboclaw address
 		self.roboLib = 'rc.py2.py' #this is the roboclaw interface
-		self.sb = subprocess
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
 	def myInit(self):
-		self.args = ['python',self.roboLib,'-v']
-		self.proc = self.sb.call(self.args)		
+		self.args = [commands.py,self.roboLib,commands.getVersion]
+		return(sb.call(self.args))		
 	def getVersion(self):
-		self.args = ['python',self.roboLib],'-v'
-		self.proc = self.sb.call(self.args)	
+		self.args = [commands.py,self.roboLib,commands.getVersion]
+		return(sb.call(self.args))
+	def getVoltage(self):
+		self.args = [commands.py,self.roboLib,commands.getVoltage]
+		return(sb.call(self.args))
+	def setLeft(self, pow):
+		self.args = [commands.py,self.roboLib,commands.driveLeft,str(pow)]
+		print(self.args)
+		return(sb.call(self.args))
+	def forward(self,pow):
+		self.args = [commands.py,self.roboLib,commands.driveForward,str(pow)]
+		return(sb.call(self.args))
+	def stop(self):
+		self.args = [commands.py,self.roboLib,commands.stop]
+		return(sb.call(self.args))
+rc = prometheus()
+print("STage1:\t{} ".format((rc.setLeft(30))))
+time.sleep(1)
+print("Stage2:\t{} ".format((rc.setLeft(0))))
+time.sleep(1)
+print("Stage3\t{}".format(rc.forward(30)))
+time.sleep(1)
+rc.stop()

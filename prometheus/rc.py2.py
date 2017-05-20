@@ -105,20 +105,24 @@ def getVolt():#this is a debug function!
 		cellV = volts/cells#so we get an aprox Volt per cell (debug)
 		if(debug):
 			print("main battery voltage: raw=\t{raw},\tCell=\t{cell}".format(raw=volts,cell=cellV))
+		returnStatus(0,[volts,cellV])
 		return([volts,cellV])
 	else:
 		returnStatus(1,"unable to read voltage")
 def getVersion():
 	try:
 		connect()
-		rc.ReadVersion(addr)
+		ret = rc.ReadVersion(addr)
+		returnStatus(0,ret)
 	except Exception as e:
 		returnStatus(1,"Unable to read version")
 def returnStatus(isError,message):	
 	"""prints message to stdout"""
 	if isError: #if the message is an error message
 		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.error,msg=message))
+		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.error,msg=message))
 	else: #if its a success message
+		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.success,msg=message))
 		print("{dl}{status}{dl}{msg}{dl}".format(dl=status.deliminator,status=status.success,msg=message))
 
 if(len(argv)<=1): #if no no arguments are given
@@ -173,3 +177,5 @@ else:#if we have an argument, lets figure out the command we received...
 	else: #if the comand is not recognized, ignore it
 		#print("unknown command: {cmd}".format(cmd=x))
 		returnStatus(1,"unknown command: {cmd}".format(cmd=x))
+		returnStatus(1,"unknown command: {cmd}".format(cmd=x))
+
