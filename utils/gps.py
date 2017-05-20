@@ -10,7 +10,7 @@ import serial #for serial comms
 port = "" #set me via .setPort!
 baud = 9600
 isPortDefined = 0 #Bool
-
+import sys
 
 #Word Enums
 class words():
@@ -28,7 +28,7 @@ def parseGPS(rawStr):
 	elif delimStrB[0] ==words.timeData:
 		return(readTime(delimStrB))
 	else:
-		return(0)
+		return([None]*16)
 def readTime(delimStr):
 	"""gets time from GPRMC"""
 	h=0 #init vars before use
@@ -138,15 +138,16 @@ def initGeoFence(pts):
 	"""Collects pts datapoints to define the geofence"""
 	poly = [None] #init poly structure before populatng
 	for x in range(0,pts+1):
-		print("-----------\nposition bot at next geofence vertex and hit enter to continue...\n--------------")
+		print("--------------\nposition bot at next geofence vertex and hit enter to continue...\n--------------")
 		sys.stdin.readline()
 		retn = parseGPS(str(theGPS.readline()))
+#		print("retn = {}".format(retn))
 		while (len(retn)!=4): #if we parsed something other than LL data...
 			retn = parseGPS(str(theGPS.readline())) #read an additional line
-		poly.append((retn[0]E2+retn[1],retn[2]E2+retn[3]))
-		return(poly)
+		poly.append((retn[0]*1e2+retn[1],retn[2]*1E2+retn[3]))
+	return(poly)
 init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
 #for x in range(1,20):
 #	print(parseGPS(str(theGPS.readline())))
-print(initGeoFence(4))
+print("poly = {}".format(initGeoFence(4)))
