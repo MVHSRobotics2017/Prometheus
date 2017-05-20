@@ -46,11 +46,13 @@ def readTime(delimStr):
 		elif i<=5 and i>2: #ss
 			sStr += char
 		i +=1 #most important thing this.
-	h=int(hStr) #casting output to int
-	m=int(mStr) #casting output to int
-	s=int(sStr) #casting output to int
-	return([h,m,s])
-
+	try:
+		h=int(hStr) #casting output to int
+		m=int(mStr) #casting output to int
+		s=int(sStr) #casting output to int
+		return([h,m,s])
+	except Exception as e:
+		return([None]*16)
 def formatLatLong(delimStr):
 	"""converts GPGGA data to Degrees, Seconds"""
 	#init locals
@@ -134,6 +136,12 @@ def getSerial():
 		return(serial.Serial(port, baud))
 	else:
 		raise ValueError("You need to init the gps longitudinal before attempting to get the object!")
+def getLocation():
+	"""returns lat,long data from gps stream"""
+	retn = parseGPS(str(theGPS.readline()))
+	while(len(retn)!=4):
+		retn = parseGPS(str(theGPS.readline()))
+	return(retn[0]*1e2+retn[1],retn[2]*1e2+retn[3])
 def initGeoFence(pts):
 	"""Collects pts datapoints to define the geofence"""
 	poly = [None] #init poly structure before populatng
@@ -150,4 +158,4 @@ init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
 #for x in range(1,20):
 #	print(parseGPS(str(theGPS.readline())))
-print("poly = {}".format(initGeoFence(4)))
+#print("poly = {}".format(initGeoFence(4)))

@@ -7,6 +7,9 @@ import os #because 'system' exists elsewhere, to avoid confusion
 from platform import python_version #less memory than importing the whole thing
 import handleSubproccess as sb
 import time
+import util.gps as gps
+import util.geofence as geoFence
+import util.geofence as geofence
 # # Version test # #
 def versionTest():
 	"""Ensures the interpreter is python3"""
@@ -21,7 +24,7 @@ def versionTest():
 
 #let's ensure script is executed with python3
 versionTest()
-
+geo_points = 4
 class commands():
 	py = 'python'
 	getVolt = '-volt'
@@ -38,6 +41,8 @@ class prometheus():
 		#self.arg = arg
 		self.address = 128 #roboclaw address
 		self.roboLib = 'rc.py2.py' #this is the roboclaw interface
+		self.fence = gps.initGeoFence(geo_points) # prompts for the geofence to be defined
+			#must occur at startup (perhaps cached for brownouts?)		
 	#end auto-generated stub...
 	def placeHolder(self):
 		pass
@@ -50,13 +55,29 @@ class prometheus():
 	def getVoltage(self):
 		self.args = [commands.py,self.roboLib,commands.getVoltage]
 		return(sb.call(self.args))
+	def setRight(self,pow):
+		loc = gps.getLocation()
+		if(geofence.pip(loc[0],loc[1],self.fence)):
+			self.args = [commands.py,self.roboLib,commands.driveRight]
+			return(sb.call(self.args))
 	def setLeft(self, pow):
-		self.args = [commands.py,self.roboLib,commands.driveLeft,str(pow)]
-		print(self.args)
-		return(sb.call(self.args))
+		loc = gps.getLocation()
+		if(geofence.pip(loc[0],loc[1],self.fence)):
+			self.args = [commands.py,self.roboLib,commands.driveLeft,str(pow)]
+			print(self.args)
+			return(sb.call(self.args))
+		else:
+			print("exceeded fence!\nStopping!")
+			self.stop()
 	def forward(self,pow):
-		self.args = [commands.py,self.roboLib,commands.driveForward,str(pow)]
-		return(sb.call(self.args))
+		loc = gps.getLocation()
+		if(geofence.pip(loc[0],loc[1],self.fence)):
+			self.args = [commands.py,self.roboLib,commands.driveForward,str(pow)]
+			return(sb.call(self.args))
+		else:
+			self.stop()
+			print("Exceeded fence!\nStopping!")
+			return(-1)
 	def stop(self):
 		self.args = [commands.py,self.roboLib,commands.stop]
 		return(sb.call(self.args))
