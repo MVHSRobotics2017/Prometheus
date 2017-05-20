@@ -11,6 +11,7 @@ import util.gps as gps
 import util.geofence as geoFence
 import util.geofence as geofence #because typos occured and this was the simplest solution...
 import util.sonar as sonar
+import sys
 # # Version test # #
 def versionTest():
 	"""Ensures the interpreter is python3"""
@@ -59,7 +60,7 @@ class prometheus():
 	def setRight(self,pow):
 		loc = gps.getLocation()
 		if(geofence.pip(loc[0],loc[1],self.fence)):
-			self.args = [commands.py,self.roboLib,commands.driveRight]
+			self.args = [commands.py,self.roboLib,commands.driveRight,pow]
 			return(sb.call(self.args))
 	def setLeft(self, pow):
 		loc = gps.getLocation()
@@ -133,6 +134,8 @@ class prometheus():
 				sleep(1)
 			self.forward(cruse)
 rc = prometheus()
+print("======\nInit complete\n-----\nHit <enter> to run the program")
+sys.stdin.readline()
 #rc.forward(30)
 #time.sleep(2)
 #rc.stop()
@@ -142,4 +145,9 @@ rc = prometheus()
 #rc.forward(30)
 #time.sleep(2)
 #rc.stop()
-rc.collisionTest()
+while(1):
+	try:
+		rc.search()
+	except Exception as e:
+		rc.stop()
+		break 
