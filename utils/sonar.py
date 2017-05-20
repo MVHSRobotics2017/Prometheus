@@ -29,5 +29,5 @@ def sonar(TRIG,ECHO):
 		print("Mark!\tmeasured time= {delta}".format(delta=(stop-start)))
 		ret[x] = stop - start
 	#print (stop - start) * 17000
-	print("adjusted = {adjRet}".format(adjRet = ret*1.7E4))
+	print("adjusted = {adjRet}".format(adjRet = ret[x]*1.7E4))
 	GPIO.cleanup()
