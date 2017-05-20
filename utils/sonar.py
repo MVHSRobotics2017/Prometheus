@@ -1,7 +1,7 @@
 
 import RPi.GPIO as GPIO
 import time
-def sonar(TRIG,ECHO):
+def read(TRIG,ECHO):
 	"""accepts int arrays TRIG and ECHO"""
 	ret = [0.0]*len(TRIG)
 	if (len(TRIG)!=len(ECHO)):
@@ -30,5 +30,5 @@ def sonar(TRIG,ECHO):
 	#print (stop - start) * 17000
 		ret[x] = ret[x]*1.7e4
 		print("adjusted = {adjRet}".format(adjRet = ret[x]))
-	GPIO.cleanup()
+	#GPIO.cleanup()
 	return(ret)
