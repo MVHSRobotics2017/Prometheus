@@ -9,7 +9,8 @@ import handleSubproccess as sb
 import time
 import util.gps as gps
 import util.geofence as geoFence
-import util.geofence as geofence
+import util.geofence as geofence #because typos occured and this was the simplest solution...
+import util.sonar as sonar
 # # Version test # #
 def versionTest():
 	"""Ensures the interpreter is python3"""
@@ -71,23 +72,35 @@ class prometheus():
 			self.stop()
 	def forward(self,pow):
 		loc = gps.getLocation()
+		print("my location is {}",format(loc))
 		if(geofence.pip(loc[0],loc[1],self.fence)):
 			self.args = [commands.py,self.roboLib,commands.driveForward,str(pow)]
 			return(sb.call(self.args))
 		else:
 			self.stop()
 			print("Exceeded fence!\nStopping!")
-			return(-1)
+			return(1)
 	def stop(self):
 		self.args = [commands.py,self.roboLib,commands.stop]
 		return(sb.call(self.args))
+	def collisionTest(self):
+		"""test if unit can avoid crashing via sonar eyes"""
+		while(sonar.read()[2] >=30):
+			ret = self.forward(30)
+			if(ret):
+				try:
+					break
+				except Exception as e:
+					pass
+		self.stop()
 rc = prometheus()
-rc.forward(30)
-time.sleep(2)
-rc.stop()
-time.sleep(1)
-rc.setLeft(30)
-time.sleep(2)
-rc.forward(30)
-time.sleep(2)
-rc.stop()
+#rc.forward(30)
+#time.sleep(2)
+#rc.stop()
+#time.sleep(1)
+#rc.setLeft(30)
+#time.sleep(2)
+#rc.forward(30)
+#time.sleep(2)
+#rc.stop()
+rc.collisionTest()

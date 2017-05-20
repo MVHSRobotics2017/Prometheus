@@ -1,44 +1,39 @@
-import RPi.GPIO as gpio
-from time import sleep
+
+import RPi.GPIO as GPIO
 import time
-trigger=20
-echo=21
-#gpio.cleanup()
-gpio.setmode(gpio.BCM)
-gpio.setup(trigger,gpio.OUT)
-gpio.setup(echo,gpio.IN)
 
-def read(x,y):
-	"""takes trigger x and echo y"""
-	gpio.output(x,gpio.LOW)
-	sleep(5./1000000.)
-	gpio.output(x,gpio.HIGH)
-	sleep(5./1000000.)
-	gpio.output(x,gpio.LOW)
-	inStart=0.0
-	inEnd=0.0
-	while(gpio.input(y)==0):
-#		print("ping?")
-		inStart = time.time() #reset timer waiting for pulsein
-	while(gpio.input(y)):
-		pass
-#		print("pong!")
-	inEnd = time.time() #wait for pulse to end
-	delta=inEnd-inStart
-	dist=delta/58.2
-	print("inStart={x}\tend={y}\tdelta={z}".format(x=inStart,y=inEnd,z=delta))
-	return dist
+TRIG = [31,35,38]
+ECHO = [33,37,40]
+def read():
+	global TRIG
+	global ECHO
+	"""reads sonar values for sensors on defined pin arrays TRIG and ECHO"""
+	ret = [0.0]*len(TRIG)
+	if (len(TRIG)!=len(ECHO)):
+		raise ValueError("TRIG != ECHO!")
+	GPIO.setmode(GPIO.BOARD)
+	for pin in TRIG:
+		GPIO.setup(TRIG,GPIO.OUT)
+		GPIO.output(TRIG,0)
+	for pin in ECHO:
+		GPIO.setup(pin,GPIO.IN)
 
-try:
-	print("foo?")
-	while(1==1):
-		print("bar!")
-		mea = read(trigger,echo)
-		print("obersved value:\t{val}".format(val=mea))
-		sleep(1)
-except Exception as e:
-	print("an exception occured!")
-	print(e)
-	gpio.cleanup()
-	raise e
-print("hello world!")
+	time.sleep(0.1)
+	print("Starting Measurements...")
+	for x in range(0,len(TRIG)):
+#		print("beggining measurement on sensor:{i}\n\tusing input ({a},{b}).".format(i=x,a=TRIG[x],b=ECHO[x]))
+		GPIO.output(TRIG[x],1)
+		time.sleep(0.00001)
+		GPIO.output(TRIG[x],0)
+		while GPIO.input(ECHO[x]) == 0:
+			start = time.time()
+		while GPIO.input(ECHO[x]) == 1:
+			pass
+		stop = time.time()
+#		print("Mark!\tmeasured time= {delta}".format(delta=(stop-start)))
+		ret[x] = stop - start
+	#print (stop - start) * 17000
+		ret[x] = ret[x]*1.7e4
+		print("adjusted = {adjRet}".format(adjRet = ret[x]))
+	#GPIO.cleanup()
+	return(ret)

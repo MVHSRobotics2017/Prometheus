@@ -153,6 +153,8 @@ def initGeoFence(pts):
 		while (len(retn)!=4): #if we parsed something other than LL data...
 			retn = parseGPS(str(theGPS.readline())) #read an additional line
 		poly.append((retn[0]*1e2+retn[1],retn[2]*1E2+retn[3]))
+		print("Point was {}".format(poly[x]))
+	poly.remove(None) #gets red of the index value None, its breaking all the things
 	return(poly)
 init('/dev/ttyAMA0',9600)
 theGPS = getSerial()
