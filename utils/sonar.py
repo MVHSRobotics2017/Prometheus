@@ -21,8 +21,7 @@ def sonar(TRIG,ECHO):
 		time.sleep(0.00001)
 		GPIO.output(TRIG[x],0)
 		while GPIO.input(ECHO[x]) == 0:
-			pass
-		start = time.time()
+			start = time.time()
 		while GPIO.input(ECHO[x]) == 1:
 			pass
 		stop = time.time()
